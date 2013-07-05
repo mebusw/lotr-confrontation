@@ -12,7 +12,7 @@ class Mock:
 
     def verify(self):
         if not all(count == 0 for  key, count in self.callInfo.iteritems()):
-            raise Exception()
+            raise Exception(self.callInfo)
 
     def whereToRetreat(self):
         if 'whereToRetreat' not in self.callInfo:
@@ -122,18 +122,28 @@ class TestGameRules(unittest.TestCase):
         self.assertIn(Spawns.Pippin, self.game.spawnsAt("XXX"))
 
 
-    def xtest_attacking_player_should_choose_one_of_defenders(self):
+    def test_attacking_player_should_choose_one_to_fight_then_the_other(self):
         self.game.setSpawn(Spawns.Sam, "Moria")
         self.game.setSpawn(Spawns.Pippin, "Moria")
         self.game.setSpawn(Spawns.FlyingNazgul, "Hollin")
-        self.dark.expectOneCall("whoToAttack").returnValue("Sam")
+        self.dark.expectOneCall("whoToAttack").returnValue(Spawns.Sam)
 
-        self.game.playerMove(Spawns.FlyingNazgul, "Moria")
+        self.game.playerMove(Spawns.FlyingNazgul, "Moria", self.dark)
 
         self.assertIn(Spawns.FlyingNazgul, self.game.spawnsAt("Moria"))
-        self.assertIn(Spawns.Pippin, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Sam, self.game.spawnsAt("Moria"))
+        self.assertNotIn(Spawns.Pippin, self.game.spawnsAt("Moria"))
 
+    def test_Sam_get_5_strength_to_beat_FlyingNazgul_when_standing_with_Frodo(self):
+        self.game.setSpawn(Spawns.Sam, "Moria")
+        self.game.setSpawn(Spawns.Frodo, "Moria")
+        self.game.setSpawn(Spawns.FlyingNazgul, "Hollin")
+
+        self.game.playerMove(Spawns.FlyingNazgul, "Moria", self.dark)
+
+        self.assertNotIn(Spawns.FlyingNazgul, self.game.spawnsAt("Moria"))
+        self.assertIn(Spawns.Sam, self.game.spawnsAt("Moria"))
+        self.assertIn(Spawns.Frodo, self.game.spawnsAt("Moria"))
 
 ###TODO
 ### should validate if XXX can retreat to

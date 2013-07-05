@@ -19,8 +19,10 @@ class Game(object):
         self.spawns[spawn] = tile
 
     
-    def playerMove(self, spawn, dest):
+    def playerMove(self, spawn, dest, player=None):
         self.spawns[spawn] = dest
+        self.currentPlayer = player
+
         self.resolve(dest, spawn)
 
     def spawnsAt(self, tile):
@@ -35,11 +37,23 @@ class Game(object):
         return weaks
 
     def resolve(self, tile, attacker):
-        fightingSpawns = self.spawnsAt(tile)
-        if len(fightingSpawns) > 2:
-            defenser = self.dark.whoToAttack()
+        spawnsOnSameTile = self.spawnsAt(tile)
+        fightingSpawns = spawnsOnSameTile
+        hasMultipleConflicts = False
+        Spawns.Sam.strengh = 2
+
 
         if attacker != Spawns.Warg:
+
+            if len(spawnsOnSameTile) > 2:
+                hasMultipleConflicts = True
+                if Spawns.Frodo in spawnsOnSameTile and Spawns.Sam in spawnsOnSameTile:
+                    Spawns.Sam.strengh = 5
+                    defenser = Spawns.Sam
+                else:
+                    defenser = self.currentPlayer.whoToAttack()
+                fightingSpawns = [attacker, defenser]
+
 
             if Spawns.Pippin in fightingSpawns and attacker == Spawns.Pippin:
                 retreatDest = self.light.whereToRetreat()
@@ -61,8 +75,12 @@ class Game(object):
                         del self.spawns[victim]
                     return
 
+
         for victim in self.rule_basic(fightingSpawns):
             del self.spawns[victim]
+
+        if hasMultipleConflicts and attacker in self.spawns:
+            self.resolve(tile, attacker)
 
     def rule_basic(self, fightingSpawns, attacker=None):
         return self._getWeakSpawns(fightingSpawns)  

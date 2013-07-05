@@ -10,14 +10,16 @@ class Game(object):
     '''
 
 
-    def __init__(self):
+    def __init__(self, light, dark):
         self.spawns = {}
+        self.light = light
+        self.dark = dark
 
     def setSpawn(self, spawn, tile):
         self.spawns[spawn] = tile
 
     
-    def player1Move(self, spawn, dest):
+    def playerMove(self, spawn, dest):
         self.spawns[spawn] = dest
         self.resolve(dest, spawn)
 
@@ -34,15 +36,19 @@ class Game(object):
 
     def resolve(self, tile, attacker):
         fightingSpawns = self.spawnsAt(tile)
+        if len(fightingSpawns) > 2:
+            defenser = self.dark.whoToAttack()
 
         if attacker != Spawns.Warg:
 
             if Spawns.Pippin in fightingSpawns and attacker == Spawns.Pippin:
-                self._state = 'if_retreat_s'
+                retreatDest = self.light.whereToRetreat()
+                self.setSpawn(Spawns.Pippin, retreatDest)
                 return
 
             if Spawns.Frodo in fightingSpawns and attacker != Spawns.Frodo:
-                self._state = 'if_retreat_s'
+                retreatDest = self.light.whereToRetreat()
+                self.setSpawn(Spawns.Frodo, retreatDest)
                 return
 
             for rule in [self.rule_Orc_kills_Legolas_immediately, 

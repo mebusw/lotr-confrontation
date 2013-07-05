@@ -19,7 +19,7 @@ class Game(object):
         self.spawns[spawn] = tile
 
     
-    def playerMove(self, spawn, dest, player=None):
+    def playerMove(self, spawn, dest, player):
         self.spawns[spawn] = dest
         self.currentPlayer = player
 

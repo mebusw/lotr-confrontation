@@ -48,7 +48,7 @@ class TestGameRules(unittest.TestCase):
     def test_player2_meet_player1_then_stronger_win(self):
         self.game.setSpawn(Spawns.Sam, "Moria")
         self.game.setSpawn(Spawns.Shelob, "MHollinoria")
-        self.game.playerMove(Spawns.Shelob, "Moria")
+        self.game.playerMove(Spawns.Shelob, "Moria", self.dark)
 
         self.assertIn(Spawns.Shelob, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Sam, self.game.spawnsAt("Moria"))
@@ -56,7 +56,7 @@ class TestGameRules(unittest.TestCase):
     def test_player2_meet_player1_then_both_die(self):
         self.game.setSpawn(Spawns.Sam, "Moria")
         self.game.setSpawn(Spawns.Warg, "Hollin")
-        self.game.playerMove(Spawns.Warg, "Moria")
+        self.game.playerMove(Spawns.Warg, "Moria", self.dark)
 
         self.assertNotIn(Spawns.Warg, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Sam, self.game.spawnsAt("Moria"))
@@ -64,7 +64,7 @@ class TestGameRules(unittest.TestCase):
     def test_Merry_defeat_WitchKing_immediately(self):
         self.game.setSpawn(Spawns.Merry, "Moria")
         self.game.setSpawn(Spawns.WitchKing, "Hollin")
-        self.game.playerMove(Spawns.WitchKing, "Moria")
+        self.game.playerMove(Spawns.WitchKing, "Moria", self.dark)
 
         self.assertIn(Spawns.Merry, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.WitchKing, self.game.spawnsAt("Moria"))
@@ -72,7 +72,7 @@ class TestGameRules(unittest.TestCase):
     def test_Legolas_defeat_FlyingNazgul_immediately(self):
         self.game.setSpawn(Spawns.Legolas, "Moria")
         self.game.setSpawn(Spawns.FlyingNazgul, "Hollin")
-        self.game.playerMove(Spawns.FlyingNazgul, "Moria")
+        self.game.playerMove(Spawns.FlyingNazgul, "Moria", self.dark)
 
         self.assertIn(Spawns.Legolas, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.FlyingNazgul, self.game.spawnsAt("Moria"))
@@ -80,7 +80,7 @@ class TestGameRules(unittest.TestCase):
     def test_Orc_defeat_Legolas_immediately(self):
         self.game.setSpawn(Spawns.Legolas, "Moria")
         self.game.setSpawn(Spawns.Orcs, "Hollin")
-        self.game.playerMove(Spawns.Orcs, "Moria")
+        self.game.playerMove(Spawns.Orcs, "Moria",self.dark)
 
         self.assertIn(Spawns.Orcs, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Legolas, self.game.spawnsAt("Moria"))
@@ -88,7 +88,7 @@ class TestGameRules(unittest.TestCase):
     def test_Legolas_attack_Orc_and_both_die(self):
         self.game.setSpawn(Spawns.Orcs, "Moria")
         self.game.setSpawn(Spawns.Legolas, "Hollin")
-        self.game.playerMove(Spawns.Legolas, "Moria")
+        self.game.playerMove(Spawns.Legolas, "Moria", self.light)
 
         self.assertNotIn(Spawns.Orcs, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Legolas, self.game.spawnsAt("Moria"))
@@ -96,7 +96,7 @@ class TestGameRules(unittest.TestCase):
     def test_Warg_elimates_ability_of_opponent(self):
         self.game.setSpawn(Spawns.Frodo, "Moria")
         self.game.setSpawn(Spawns.Warg, "Hollin")
-        self.game.playerMove(Spawns.Warg, "Moria")
+        self.game.playerMove(Spawns.Warg, "Moria", self.dark)
 
         self.assertIn(Spawns.Warg, self.game.spawnsAt("Moria"))
         self.assertNotIn(Spawns.Frodo, self.game.spawnsAt("Moria"))
@@ -106,7 +106,7 @@ class TestGameRules(unittest.TestCase):
         self.game.setSpawn(Spawns.Orcs, "Hollin")
         self.light.expectOneCall("whereToRetreat").returnValue("XXX")
 
-        self.game.playerMove(Spawns.Orcs, "Moria")
+        self.game.playerMove(Spawns.Orcs, "Moria", self.dark)
 
         self.assertIn(Spawns.Orcs, self.game.spawnsAt("Moria"))
         self.assertIn(Spawns.Frodo, self.game.spawnsAt("XXX"))
@@ -116,7 +116,7 @@ class TestGameRules(unittest.TestCase):
         self.game.setSpawn(Spawns.Orcs, "Moria")
         self.light.expectOneCall("whereToRetreat").returnValue("XXX")
 
-        self.game.playerMove(Spawns.Pippin, "Moria")
+        self.game.playerMove(Spawns.Pippin, "Moria", self.light)
 
         self.assertIn(Spawns.Orcs, self.game.spawnsAt("Moria"))
         self.assertIn(Spawns.Pippin, self.game.spawnsAt("XXX"))
